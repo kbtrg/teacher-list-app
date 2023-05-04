@@ -1,0 +1,14 @@
+@import "~/styles/variables.scss";
+@import "~/styles/utils.scss";
+
+.container {
+  height: 60px;
+  background-color:#2b70e0;
+  color: white;
+
+  .title {
+    line-height: 60px;
+    font-size: 24px;
+    margin-left: 20px;
+  }
+}
