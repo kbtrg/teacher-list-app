@@ -1,6 +1,6 @@
 import classnames from "classnames";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ErrorMessage from "~/component/atoms/ErrorMessage";
 import Loading from "~/component/atoms/Loading";
 import Pagination from "~/component/atoms/Pagination.tsx";
@@ -31,7 +31,7 @@ const TeacherList: React.FC<Props> = ({
   const limit = 20 // 1ページあたりの表示数
   const [sortKey, setSortKey] = useState<Maybe<SortKey>>(undefined) // ソートの種類
   const [order, setOrder] = useState<Maybe<Order>>(undefined) // 並び順
-  const [searchText, setSearchText] = useState("") // 部分一致検索テキスト
+  const searchText = useRef("") // 部分一致検索テキスト
   const [isReadySearch, setIsReadySearch] = useState(false) // 部分一致検索テキスト
 
   const totalPage = Math.ceil(totalTeachers / limit) // ページネーションの総数
@@ -56,7 +56,7 @@ const TeacherList: React.FC<Props> = ({
       const limitQuery = limit ? `_limit=${limit}` : ""
       const sortKeyQuery = sortKey ? `_sort=${sortKey}` : ""
       const orderQuery = order ? `_order=${order}` : ""
-      const searchTextQuery = searchText ? `${sortKey}_like=${searchText}` : ""
+      const searchTextQuery = searchText.current ? `${sortKey}_like=${searchText.current}` : ""
       return `?${[pageQuery, limitQuery, sortKeyQuery, orderQuery, searchTextQuery].filter(Boolean).join("&")}`
     })();
 
@@ -176,9 +176,8 @@ const TeacherList: React.FC<Props> = ({
               <p className={styles.subContent__title}>部分一致テキスト入力</p>
               <input
                 type="text"
-                value={searchText}
                 className={styles.searchText}
-                onChange={e => setSearchText(e.target.value)}
+                onChange={e => searchText.current = e.target.value}
               />
               <button
                 className={styles.searchButton}
