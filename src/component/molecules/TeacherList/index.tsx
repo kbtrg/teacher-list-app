@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Maybe, Order, Teacher } from "~/lib/types";
 import Pagination from "~/component/atoms/Pagination.tsx";
 import NoData from "~/component/molecules/NoData";
+import Loading from "~/component/atoms/Loading";
 
 type SortKey = "name" | "loginId"
 
@@ -13,7 +14,6 @@ type Props = {
 }
 
 /**
- * 2. 表示するデータが存在しない場合
  * 3. 非同期処理実行中にローディングを表示
  * 4. 通信エラーが発生した場合
  * 5. デザイン作り
@@ -22,6 +22,7 @@ type Props = {
 const TeacherList: React.FC<Props> = ({
   className = "",
 }: Props) => {
+  const [isLoading, setIsLoading] = useState(false) // ローディング
   const [totalTeachers, setTotalTeachers] = useState(0) // 先生の総数
   const [teachers, setTeachers] = useState<Teacher[]>([]) // 先生のリスト
   const [page, setPage] = useState(1) // ページ番号
@@ -32,7 +33,7 @@ const TeacherList: React.FC<Props> = ({
   const [isReadySearch, setIsReadySearch] = useState(false) // 部分一致検索テキスト
 
   const totalPage = Math.ceil(totalTeachers / limit) // ページネーションの総数
-
+  
   // 先生の総数を取得（ページネーションの表示を変更するために取得）
   useEffect(() => {
     _axios.get("")
@@ -42,6 +43,8 @@ const TeacherList: React.FC<Props> = ({
   
   // 条件に合った先生一覧を取得
   useEffect(() => {
+    setIsLoading(true)
+
     const query = (() => {
       const pageQuery = page ? `_page=${page}` : ""
       const limitQuery = limit ? `_limit=${limit}` : ""
@@ -49,11 +52,19 @@ const TeacherList: React.FC<Props> = ({
       const orderQuery = order ? `_order=${order}` : ""
       const searchTextQuery = searchText ? `${sortKey}_like=${searchText}` : ""
       return `?${[pageQuery, limitQuery, sortKeyQuery, orderQuery, searchTextQuery].filter(Boolean).join("&")}`
-    })()
+    })();
 
-    _axios.get(query)
-      .then(res => setTeachers(res.data))
-      .catch(err => console.error(err))
+    (async () => {
+      try {
+        await _axios.get(query)
+          .then(res => setTeachers(res.data))
+          .catch(err => console.error(err))
+      } catch(error) {
+        console.error(error)
+      } finally {
+        setIsLoading(false)
+      }
+    })()
   
     // 部分一致検索のフラグをfalseにする
     if(isReadySearch) {
@@ -66,7 +77,7 @@ const TeacherList: React.FC<Props> = ({
   const CustomMainContent: React.FC = () => {
     return (
       <>
-        {teachers.length === 0 && <NoData />}
+        {!isLoading && teachers.length === 0 && <NoData />}
         {teachers.map((teacher, i) => {
           return (
             <ul key={i}>
@@ -81,9 +92,11 @@ const TeacherList: React.FC<Props> = ({
     )
   }
 
-
   return (
     <section className={classnames(styles.container, className)}>
+      {/* ローディング */}
+      {isLoading && <Loading />}
+
       {/* ソートの種類 */}
       <p>ソートの種類</p>
       <select
