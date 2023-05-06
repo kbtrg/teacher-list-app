@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import type { UrlObject } from "url";
-import { pagesPath, PagesPath } from "@src/lib/pathpida/$path";
+import { PagesPath, pagesPath } from "~/lib/pathpida/$path";
 
 type Props = {
   href: UrlObject | ((path: PagesPath) => UrlObject);

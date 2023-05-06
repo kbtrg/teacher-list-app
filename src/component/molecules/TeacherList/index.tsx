@@ -1,15 +1,9 @@
 import classnames from "classnames"
 import styles from "./index.module.scss"
 import { _axios } from "~/lib/utils";
-import { useEffect, useState } from "react";
-import { Maybe, Order, SetState, Teacher } from "~/lib/types";
-import { useRouter } from "next/router";
-
-type CustomSort = {
-  title: string
-  order: Maybe<SortKey> | Maybe<Order>
-  setOrder: SetState<Maybe<SortKey>> | SetState<Maybe<Order>>
-}
+import { SetStateAction, useEffect, useState } from "react";
+import { Maybe, Order, Teacher } from "~/lib/types";
+import Pagination from "~/component/atoms/Pagination.tsx";
 
 type SortKey = "name" | "loginId"
 
@@ -17,11 +11,18 @@ type Props = {
   className?: string;
 }
 
+/**
+ * 1. ページネーション
+ * 2. 表示するデータが存在しない場合
+ * 3. 非同期処理実行中にローディングを表示
+ * 4. 通信エラーが発生した場合
+ * 5. デザイン作り
+ */
+
 const TeacherList: React.FC<Props> = ({
   className = "",
 }: Props) => {
-  const router = useRouter()
-
+  const [totalTeachers, setTotalTeachers] = useState(0) // 先生の総数
   const [teachers, setTeachers] = useState<Teacher[]>([]) // 先生のリスト
   const [page, setPage] = useState(1) // ページ番号
   const [limit, setLimit] = useState(20) // 1ページあたりの表示数
@@ -29,8 +30,17 @@ const TeacherList: React.FC<Props> = ({
   const [order, setOrder] = useState<Maybe<Order>>(undefined) // 並び順
   const [searchText, setSearchText] = useState("") // 部分一致検索テキスト
   const [isReadySearch, setIsReadySearch] = useState(false) // 部分一致検索テキスト
+
+  const totalPage = Math.ceil(totalTeachers / limit) // ページネーションの総数
+
+  // 先生の総数を取得（ページネーションの表示を変更するために取得）
+  useEffect(() => {
+    _axios.get("")
+      .then(res => setTotalTeachers(res.data.length))
+      .catch(err => console.error(err))
+  })
   
-  // 先生一覧を取得
+  // 条件に合った先生一覧を取得
   useEffect(() => {
     const query = (() => {
       const pageQuery = page ? `_page=${page}` : ""
@@ -53,26 +63,7 @@ const TeacherList: React.FC<Props> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, limit, sortKey, order, isReadySearch])
 
-  // const CustomSelect: React.FC<CustomSort> = ({
-  //   title,
-  //   order,
-  //   setOrder,
-  // }) => {
 
-  //   return (
-  //     <>
-  //       <p>{title}</p>
-  //       <select
-  //         value={sortKey}
-  //         onChange={e => setSortKey(e.target.value as Maybe<SortKey>)}
-  //       >
-  //         <option value={undefined}>デフォルト</option>
-  //         <option value="name">名前</option>
-  //         <option value="loginId">ログインID</option>
-  //       </select>
-  //     </>
-  //   )
-  // }
 
   return (
     <section className={classnames(styles.container, className)}>
@@ -120,6 +111,9 @@ const TeacherList: React.FC<Props> = ({
           </ul>
         )
       })}
+
+      {/* ページネーション */}
+      <Pagination page={page} setPage={setPage} totalPage={totalPage}/>
     </section>
   )
 }

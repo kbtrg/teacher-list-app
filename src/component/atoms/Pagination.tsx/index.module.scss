@@ -1,0 +1,39 @@
+@import "~/styles/variables.scss";
+@import "~/styles/utils.scss";
+
+$height: 40px;
+
+.container {
+  display: flex;
+  
+  .arrowWrapper {
+    position: relative;
+    line-height: $height;
+    width: 40px;
+    height: $height;
+    border: 1px solid #EBEAEE;
+    background-color: white;
+    
+    .arrow {
+      position: absolute;
+      top: 10px;
+      left: 8px;
+    }
+  }
+
+  .number {
+    display: inline-block;
+    text-align: center;
+    line-height: $height;
+    width: 40px;
+    height: $height;
+    border: 1px solid #EBEAEE;
+    background-color: white;
+    color: #3173F4;
+    
+    &__active {
+      background-color: #3173F4;
+      color: white;
+    }
+  }
+}
