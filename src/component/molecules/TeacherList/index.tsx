@@ -1,6 +1,6 @@
 import classnames from "classnames"
 import styles from "./index.module.scss"
-import { _axios } from "~/lib/utils";
+import { _axios, wait } from "~/lib/utils";
 import { useEffect, useState } from "react";
 import { Maybe, Order, Teacher } from "~/lib/types";
 import Pagination from "~/component/atoms/Pagination.tsx";
@@ -27,7 +27,7 @@ type Props = {
 const TeacherList: React.FC<Props> = ({
   className = "",
 }: Props) => {
-  const [isLoading, setIsLoading] = useState(false) // ローディング
+  const [isLoading, setIsLoading] = useState(true) // ローディング
   const [isError, setIsError] = useState(false) // 通信エラー
   const [totalTeachers, setTotalTeachers] = useState(0) // 先生の総数
   const [teachers, setTeachers] = useState<Teacher[]>([]) // 先生のリスト
@@ -52,6 +52,7 @@ const TeacherList: React.FC<Props> = ({
   
   // 条件に合った先生一覧を取得
   useEffect(() => {
+    if(isError) return
     setIsLoading(true)
 
     const query = (() => {
@@ -84,7 +85,7 @@ const TeacherList: React.FC<Props> = ({
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, limit, sortKey, order, isReadySearch])
+  }, [page, limit, sortKey, order, isReadySearch, isError])
 
   const CustomMainContent: React.FC = () => {
     const TeacherList: React.FC = () => {
@@ -118,12 +119,14 @@ const TeacherList: React.FC<Props> = ({
       else return (
         <>
           <TeacherList />
-          <Pagination
-            page={page}
-            setPage={setPage}
-            totalPage={totalPage}
-            className={styles.pagination}
-          />
+          {!isLoading && (
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPage={totalPage}
+              className={styles.pagination}
+            />
+          )}
         </>
       )
     }
