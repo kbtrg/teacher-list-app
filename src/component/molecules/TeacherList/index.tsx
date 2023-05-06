@@ -115,7 +115,17 @@ const TeacherList: React.FC<Props> = ({
     const MainContent: React.FC = () => {
       if (isError) return <ErrorMessage setIsError={setIsError} />
       else if (!isLoading && teachers.length === 0) return <NoData />
-      else return <TeacherList />
+      else return (
+        <>
+          <TeacherList />
+          <Pagination
+            page={page}
+            setPage={setPage}
+            totalPage={totalPage}
+            className={styles.pagination}
+          />
+        </>
+      )
     }
     
     return <MainContent />
@@ -194,8 +204,6 @@ const TeacherList: React.FC<Props> = ({
       <section className={styles.mainContent}>
         {/* 先生一覧表示 */}
         <CustomMainContent />
-        {/* ページネーション */}
-        <Pagination page={page} setPage={setPage} totalPage={totalPage}/>
       </section>
     </section>
   )

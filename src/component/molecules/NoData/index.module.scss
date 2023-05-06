@@ -1,6 +1,26 @@
 @import "~/styles/variables.scss";
 @import "~/styles/utils.scss";
 
+$wrapper-height: 70px;
+
 .container {
+  position: relative;
+  min-height: 400px;
+  padding: 25px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  background-color: #ffeae8;
   
+  .wrapper {
+    position: absolute;
+    top: calc(50% - ($wrapper-height / 2));
+    width: calc(100% - 50px);
+    height: $wrapper-height;
+    text-align: center;
+    
+    p {
+      margin: 10px 0;
+      color: red;
+    }
+  }
 }

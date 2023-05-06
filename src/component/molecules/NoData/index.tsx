@@ -10,7 +10,10 @@ const NoData: React.FC<Props> = ({
 }: Props) => {
   return (
     <section className={classnames(styles.container, className)}>
-      データがありません
+      <div className={styles.wrapper}>
+        <p>データが存在しません</p>
+        <p>条件を変更して再度検索してください</p>
+      </div>
     </section>
   )
 }
