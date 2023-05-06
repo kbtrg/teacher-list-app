@@ -2,5 +2,56 @@
 @import "~/styles/utils.scss";
 
 .container {
+  .sidebar {
+    width: 300px;
+    min-height: 300px;
+    padding: 25px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.searchText {
+  height: 30px;
+  outline: 1px solid #DADADA;
+  border-radius: 5px;
+  margin-right: 5px;
+}
+
+.searchButton {
+  font-size: 14px;
+  background-color: #F5F5F5;
+  border: 1px solid #DADADA;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.errorButton {
+  font-size: 14px;
+  background-color: #fffcbf;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin-left: 10px;
+}
+
+.customBlock {
+  margin-bottom: 30px;
   
+  .title {
+    margin-bottom: 10px;
+  }
+
+  .children {
+    margin-left: 20px;
+  }
+
+  .subContent {
+    margin: 20px 0;
+
+    &__title {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+  }
 }
