@@ -3,19 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "run-p dev:* watch:*",
+    "dev": "run-p dev:*",
     "dev:next": "next dev",
-    "build": "generate:path next build",
+    "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "watch:path": "pathpida --ignorePath .gitignore --output src/lib/pathpida --watch",
-    "generate:path": "pathpida --ignorePath .gitignore --output src/lib/pathpida"
+    "lint": "next lint"
   },
   "dependencies": {
     "axios": "^1.4.0",
     "classnames": "^2.3.2",
     "next": "13.3.4",
-    "pathpida": "^0.18.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sass": "^1.62.1"
