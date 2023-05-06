@@ -1,11 +1,17 @@
 @import "~/styles/variables.scss";
 @import "~/styles/utils.scss";
 
+$header-height: 60px;
+
 .container {
   display: flex;
+  padding: 25px;
+  min-height: calc(100vh - $header-height);
+  background-color: #e8f8ff;
   
   .sidebarWrapper {
     .sidebar {
+      background-color: white;
       width: 300px;
       min-height: 400px;
       padding: 25px;

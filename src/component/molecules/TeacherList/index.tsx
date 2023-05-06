@@ -1,13 +1,13 @@
-import classnames from "classnames"
-import styles from "./index.module.scss"
-import { _axios, wait } from "~/lib/utils";
+import classnames from "classnames";
+import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Maybe, Order, Teacher } from "~/lib/types";
+import ErrorMessage from "~/component/atoms/ErrorMessage";
+import Loading from "~/component/atoms/Loading";
 import Pagination from "~/component/atoms/Pagination.tsx";
 import NoData from "~/component/molecules/NoData";
-import Loading from "~/component/atoms/Loading";
-import ErrorMessage from "~/component/atoms/ErrorMessage";
-import Image from "next/image"
+import { Maybe, Order, Teacher } from "~/lib/types";
+import { _axios } from "~/lib/utils";
+import styles from "./index.module.scss";
 
 type SortKey = "name" | "loginId"
 
@@ -19,10 +19,6 @@ type CustomBlock = {
 type Props = {
   className?: string;
 }
-
-/**
- * 5. デザイン作り
- */
 
 const TeacherList: React.FC<Props> = ({
   className = "",
