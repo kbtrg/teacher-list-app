@@ -2,12 +2,40 @@
 @import "~/styles/utils.scss";
 
 .container {
-  .sidebar {
-    width: 300px;
-    min-height: 300px;
-    padding: 25px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  
+  .sidebarWrapper {
+    .sidebar {
+      width: 300px;
+      min-height: 400px;
+      padding: 25px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .mainContent {
+    flex: 1;
+    margin-left: 30px;
+
+    .teacherListWrapper {
+      .teacherList {
+        display: flex;
+        margin-bottom: 20px;
+        padding: 25px;
+        width: 100%;
+        line-height: 40px; // ユーザアイコンと同じ高さにする
+        background-color: white;
+        border: 2px solid #DADADA;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+
+        .loginId {
+          width: 100px;
+          margin: 0 20px;
+        }
+      }
+    }
   }
 }
 

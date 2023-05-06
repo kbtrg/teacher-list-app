@@ -7,6 +7,7 @@ import Pagination from "~/component/atoms/Pagination.tsx";
 import NoData from "~/component/molecules/NoData";
 import Loading from "~/component/atoms/Loading";
 import ErrorMessage from "~/component/atoms/ErrorMessage";
+import Image from "next/image"
 
 type SortKey = "name" | "loginId"
 
@@ -86,26 +87,38 @@ const TeacherList: React.FC<Props> = ({
   }, [page, limit, sortKey, order, isReadySearch])
 
   const CustomMainContent: React.FC = () => {
-    const MainContent = (() => {
-      if (isError) return <ErrorMessage setIsError={setIsError} />
-      else if (!isLoading && teachers.length === 0) return <NoData />
-      else return (
+    const TeacherList: React.FC = () => {
+      return (
         <>
-          {teachers.map((teacher, i) => {
-            return (
-              <ul key={i}>
-                <li>
-                  <p>{teacher.name}</p>
-                  <p>{teacher.loginId}</p>
+          <ul className={styles.teacherListWrapper}>
+            {teachers.map((teacher, i) => {
+              return (
+                <li key={i}>
+                  <button className={styles.teacherList}>
+                    <Image
+                      src={"/images/user.svg"}
+                      alt={teacher.name}
+                      width={40}
+                      height={40}
+                    />
+                    <p className={styles.loginId}>{teacher.loginId}</p>
+                    <p>{teacher.name}</p>
+                  </button>
                 </li>
-              </ul>
-            )
-          })}
+              )
+            })}
+          </ul>
         </>
       )
-    })()
+    }
+
+    const MainContent: React.FC = () => {
+      if (isError) return <ErrorMessage setIsError={setIsError} />
+      else if (!isLoading && teachers.length === 0) return <NoData />
+      else return <TeacherList />
+    }
     
-    return MainContent
+    return <MainContent />
   }
   
   const CustomBlock: React.FC<CustomBlock> = ({
@@ -126,63 +139,64 @@ const TeacherList: React.FC<Props> = ({
     <section className={classnames(styles.container, className)}>
       {isLoading && <Loading />}
 
-      <div className={styles.sidebar}>
-        <CustomBlock title="① ソートの種類">
-          <select
-            value={sortKey}
-            onChange={e => setSortKey(e.target.value as Maybe<SortKey>)}
-          >
-            <option value={undefined}>選択してください</option>
-            <option value="name">名前</option>
-            <option value="loginId">ログインID</option>
-          </select>
-        </CustomBlock>
-
-        <CustomBlock title="② 検索方法">
-          <div className={styles.subContent}>
-            <p className={styles.subContent__title}>並び順</p>
+      <section className={styles.sidebarWrapper}>
+        <div className={styles.sidebar}>
+          <CustomBlock title="① ソートの種類">
             <select
-              value={order}
-              onChange={e => setOrder(e.target.value as Maybe<Order>)}
+              value={sortKey}
+              onChange={e => setSortKey(e.target.value as Maybe<SortKey>)}
             >
               <option value={undefined}>選択してください</option>
-              <option value="ASC">昇順</option>
-              <option value="DESC">降順</option>
+              <option value="name">名前</option>
+              <option value="loginId">ログインID</option>
             </select>
-          </div>
+          </CustomBlock>
+          <CustomBlock title="② 検索方法">
+            <div className={styles.subContent}>
+              <p className={styles.subContent__title}>並び順</p>
+              <select
+                value={order}
+                onChange={e => setOrder(e.target.value as Maybe<Order>)}
+              >
+                <option value={undefined}>選択してください</option>
+                <option value="ASC">昇順</option>
+                <option value="DESC">降順</option>
+              </select>
+            </div>
+            <div className={styles.subContent}>
+              <p className={styles.subContent__title}>部分一致テキスト入力</p>
+              <input
+                type="text"
+                value={searchText}
+                className={styles.searchText}
+                onChange={e => setSearchText(e.target.value)}
+              />
+              <button
+                className={styles.searchButton}
+                onClick={() => setIsReadySearch(true)}
+              >
+                検索
+              </button>
+            </div>
+          </CustomBlock>
+          
+          {/* エラーを意図的に発生させるボタン */}
+          <button
+            className={styles.errorButton}
+            onClick={() => setIsError(true)}
+          >
+            エラーを発生させる
+          </button>
+        </div>
+      </section>
 
-          <div className={styles.subContent}>
-            <p className={styles.subContent__title}>部分一致テキスト入力</p>
-            <input
-              type="text"
-              value={searchText}
-              className={styles.searchText}
-              onChange={e => setSearchText(e.target.value)}
-            />
-            <button
-              className={styles.searchButton}
-              onClick={() => setIsReadySearch(true)}
-            >
-              検索
-            </button>
-          </div>
-        </CustomBlock>
-        
-        {/* エラーを意図的に発生させるボタン */}
-        <button
-          className={styles.errorButton}
-          onClick={() => setIsError(true)}
-        >
-          エラーを発生させる
-        </button>
-      </div>
 
-
-      {/* 先生一覧表示 */}
-      <CustomMainContent />
-
-      {/* ページネーション */}
-      <Pagination page={page} setPage={setPage} totalPage={totalPage}/>
+      <section className={styles.mainContent}>
+        {/* 先生一覧表示 */}
+        <CustomMainContent />
+        {/* ページネーション */}
+        <Pagination page={page} setPage={setPage} totalPage={totalPage}/>
+      </section>
     </section>
   )
 }

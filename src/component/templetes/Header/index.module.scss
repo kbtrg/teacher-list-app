@@ -10,5 +10,9 @@
     line-height: 60px;
     font-size: 24px;
     margin-left: 30px;
+
+    @include screenMd {
+      font-size: 20px;
+    }
   }
 }
