@@ -1,11 +1,12 @@
 import classnames from "classnames"
 import styles from "./index.module.scss"
 import { _axios } from "~/lib/utils";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { Maybe, Order, Teacher } from "~/lib/types";
 import Pagination from "~/component/atoms/Pagination.tsx";
 import NoData from "~/component/molecules/NoData";
 import Loading from "~/component/atoms/Loading";
+import ErrorMessage from "~/component/atoms/ErrorMessage";
 
 type SortKey = "name" | "loginId"
 
@@ -14,7 +15,6 @@ type Props = {
 }
 
 /**
- * 3. 非同期処理実行中にローディングを表示
  * 4. 通信エラーが発生した場合
  * 5. デザイン作り
  */
@@ -23,10 +23,11 @@ const TeacherList: React.FC<Props> = ({
   className = "",
 }: Props) => {
   const [isLoading, setIsLoading] = useState(false) // ローディング
+  const [isError, setIsError] = useState(false) // 通信エラー
   const [totalTeachers, setTotalTeachers] = useState(0) // 先生の総数
   const [teachers, setTeachers] = useState<Teacher[]>([]) // 先生のリスト
   const [page, setPage] = useState(1) // ページ番号
-  const [limit, setLimit] = useState(20) // 1ページあたりの表示数
+  const limit = 20 // 1ページあたりの表示数
   const [sortKey, setSortKey] = useState<Maybe<SortKey>>(undefined) // ソートの種類
   const [order, setOrder] = useState<Maybe<Order>>(undefined) // 並び順
   const [searchText, setSearchText] = useState("") // 部分一致検索テキスト
@@ -38,7 +39,10 @@ const TeacherList: React.FC<Props> = ({
   useEffect(() => {
     _axios.get("")
       .then(res => setTotalTeachers(res.data.length))
-      .catch(err => console.error(err))
+      .catch(error => {
+        console.error(error)
+        setIsError(true)
+      })
   })
   
   // 条件に合った先生一覧を取得
@@ -58,7 +62,10 @@ const TeacherList: React.FC<Props> = ({
       try {
         await _axios.get(query)
           .then(res => setTeachers(res.data))
-          .catch(err => console.error(err))
+          .catch(error => {
+            console.error(error)
+            setIsError(true)
+          })
       } catch(error) {
         console.error(error)
       } finally {
@@ -75,27 +82,35 @@ const TeacherList: React.FC<Props> = ({
   }, [page, limit, sortKey, order, isReadySearch])
 
   const CustomMainContent: React.FC = () => {
-    return (
-      <>
-        {!isLoading && teachers.length === 0 && <NoData />}
-        {teachers.map((teacher, i) => {
-          return (
-            <ul key={i}>
-              <li>
-                <p>{teacher.name}</p>
-                <p>{teacher.loginId}</p>
-              </li>
-            </ul>
-          )
-        })}
-      </>
-    )
+    const MainContent = (() => {
+      if (isError) return <ErrorMessage setIsError={setIsError} />
+      else if (!isLoading && teachers.length === 0) return <Loading />
+      else return (
+        <>
+          {teachers.map((teacher, i) => {
+            return (
+              <ul key={i}>
+                <li>
+                  <p>{teacher.name}</p>
+                  <p>{teacher.loginId}</p>
+                </li>
+              </ul>
+            )
+          })}
+        </>
+      )
+    })()
+    
+    return MainContent
   }
 
   return (
     <section className={classnames(styles.container, className)}>
       {/* ローディング */}
       {isLoading && <Loading />}
+
+      {/* エラーを意図的に発生させるボタン */}
+      <button onClick={() => setIsError(true)}>エラーを発生させる</button>
 
       {/* ソートの種類 */}
       <p>ソートの種類</p>
