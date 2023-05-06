@@ -1,9 +1,10 @@
 import classnames from "classnames"
 import styles from "./index.module.scss"
 import { _axios } from "~/lib/utils";
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Maybe, Order, Teacher } from "~/lib/types";
 import Pagination from "~/component/atoms/Pagination.tsx";
+import NoData from "~/component/molecules/NoData";
 
 type SortKey = "name" | "loginId"
 
@@ -12,7 +13,6 @@ type Props = {
 }
 
 /**
- * 1. ページネーション
  * 2. 表示するデータが存在しない場合
  * 3. 非同期処理実行中にローディングを表示
  * 4. 通信エラーが発生した場合
@@ -63,6 +63,23 @@ const TeacherList: React.FC<Props> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, limit, sortKey, order, isReadySearch])
 
+  const CustomMainContent: React.FC = () => {
+    return (
+      <>
+        {teachers.length === 0 && <NoData />}
+        {teachers.map((teacher, i) => {
+          return (
+            <ul key={i}>
+              <li>
+                <p>{teacher.name}</p>
+                <p>{teacher.loginId}</p>
+              </li>
+            </ul>
+          )
+        })}
+      </>
+    )
+  }
 
 
   return (
@@ -101,16 +118,7 @@ const TeacherList: React.FC<Props> = ({
       </button>
 
       {/* 先生一覧表示 */}
-      {teachers.map((teacher, i) => {
-        return (
-          <ul key={i}>
-            <li>
-              <p>{teacher.name}</p>
-              <p>{teacher.loginId}</p>
-            </li>
-          </ul>
-        )
-      })}
+      <CustomMainContent />
 
       {/* ページネーション */}
       <Pagination page={page} setPage={setPage} totalPage={totalPage}/>
