@@ -15,7 +15,6 @@ type Props = {
 }
 
 /**
- * 4. 通信エラーが発生した場合
  * 5. デザイン作り
  */
 
@@ -84,7 +83,7 @@ const TeacherList: React.FC<Props> = ({
   const CustomMainContent: React.FC = () => {
     const MainContent = (() => {
       if (isError) return <ErrorMessage setIsError={setIsError} />
-      else if (!isLoading && teachers.length === 0) return <Loading />
+      else if (!isLoading && teachers.length === 0) return <NoData />
       else return (
         <>
           {teachers.map((teacher, i) => {
